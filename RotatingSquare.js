@@ -50,6 +50,24 @@
       else ctx.lineTo(x, y);
   }
 
+    let vertexColor = {
+	4: "blue",
+	3: "red",
+	1: "green",
+	5: "white"
+    }
+
+    //Desenha os vértices
+    for(let i = 0; i < numPoints; i++){
+	if(i==3 || i==4) continue;
+	let [x,y] = mapToViewPort(...getVertex(i).map((x) => x));
+	ctx.beginPath();
+	ctx.fillStyle = vertexColor[i];
+	ctx.arc(x, y, 4, 0, 2*Math.PI);
+	ctx.fill();
+	ctx.closePath();
+    }
+
     //Preencher bordas do quadrado
     ctx.closePath();
     ctx.strokeStyle = "gray";
