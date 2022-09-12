@@ -1,3 +1,17 @@
+/**
+ * @file
+ *
+ * Summary.
+ *
+ * Vertices are scaled by an amount that varies by
+ * frame, and this value is passed to the draw function.
+ *
+ * @author Victor Cardoso
+ * @since 10/09/2022
+ * @see https://orion.lcg.ufrj.br/cs336/examples/example123/content/GL_example3a.html
+ */
+
+
 "use strict";
  var vertices = new Float32Array([
      -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5,
