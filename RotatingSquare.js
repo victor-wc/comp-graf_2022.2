@@ -8,7 +8,7 @@
  *
  * @author Victor Cardoso
  * @since 10/09/2022
- * @see https://orion.lcg.ufrj.br/cs336/examples/example123/content/GL_example3a.html
+ * @see https://victor-wc.github.io/comp-graf_2022.2/
  */
 
 
@@ -28,16 +28,20 @@
      let j = (i % numPoints) * 2;
      return [vertices[j], vertices[j + 1]];
  }
+
+ //Função para desenhar o quadrado
  function draw(ctx,angle,vertice) {
      let vertexIndex = vertice
      ctx.fillStyle = "rgba(0, 204, 204, 1)";
      ctx.rect(0, 0, w, h);
      ctx.fill();
      let [x, y] = mapToViewport(...getVertex(vertexIndex));
+
+     //Rotacionar o quadrado
      ctx.translate(x,y)
-     //AJUSTAR PARA GRAU
      ctx.rotate(-angle*Math.PI/180);
      ctx.translate(-x,-y)
+
      ctx.beginPath();
      for (let i = 0; i < numPoints; i++) {
       if (i == 3 || i == 4) continue;
@@ -45,10 +49,14 @@
       if (i == 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
   }
+
+    //Preencher bordas do quadrado
     ctx.closePath();
     ctx.strokeStyle = "gray";
     ctx.lineWidth = 10;
     ctx.stroke();
+
+    //Método usado para mudar o gradiente do quadrado dependendo do vértice
     if(vertice === 3 || vertice == 4){
         var grd = ctx.createLinearGradient(100, 200, 200, 100);
         grd.addColorStop(0, "red");
@@ -60,7 +68,8 @@
             grd.addColorStop(1, "green");
         }
     }
-    // Fill with gradient
+
+    // Preencher quadrado com a cor
     ctx.fillStyle = grd;
     ctx.fill();
  }
@@ -73,7 +82,8 @@
      h = canvasElement.height;
      document.addEventListener("keydown", (event) => {
         console.log(event.key);
-        //AJUSTAR AS TECLAS DO TECLADO
+
+        //Ajustar binding do teclado
         switch (event.key) {
           case "b":
             vertice = 4;
@@ -89,6 +99,7 @@
             break;
         }
       });
+
      var runanimation = (() => {
         // teta-angulow
          var angle = 2.0;
