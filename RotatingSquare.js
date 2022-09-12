@@ -57,7 +57,7 @@
         grd.addColorStop(1, "blue");
     } else{
         if(vertice == 1 || vertice == 5){
-            var grd = ctx.createLinearGradient(200, 100, 100, 200);
+            var grd = ctx.createLinearGradient(160, 160, 240, 240 + Math.sin(-Math.PI / 2));
             grd.addColorStop(0, "white");
             grd.addColorStop(1, "green");
         }
