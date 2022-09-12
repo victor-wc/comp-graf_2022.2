@@ -8,7 +8,7 @@
  *
  * @author Victor Cardoso
  * @since 10/09/2022
- * @see https://victor-wc.github.io/comp-graf_2022.2/
+ * @see https://victor-wc.github.io/comp-graf_2022.2/RotatingSquare.html
  */
 
 
@@ -31,49 +31,25 @@
 
  //Função para desenhar o quadrado
  function draw(ctx,angle,vertice) {
-     let vertexIndex = vertice
-     ctx.fillStyle = "rgba(0, 204, 204, 1)";
-     ctx.rect(0, 0, w, h);
-     ctx.fill();
-     let [x, y] = mapToViewport(...getVertex(vertexIndex));
+    let vertexIndex = vertice
+    ctx.fillStyle = "rgba(0, 204, 204, 1)";
+    ctx.rect(0, 0, w, h);
+    ctx.fill();
+    let [x, y] = mapToViewport(...getVertex(vertexIndex));
 
-     //Rotacionar o quadrado
-     ctx.translate(x,y)
-     ctx.rotate(-angle*Math.PI/180);
-     ctx.translate(-x,-y)
+    //Rotacionar o quadrado
+    ctx.translate(x,y)
+    ctx.rotate(-angle*Math.PI/180);
+    ctx.translate(-x,-y)
 
-     ctx.beginPath();
-     for (let i = 0; i < numPoints; i++) {
+    ctx.beginPath();
+    for (let i = 0; i < numPoints; i++) {
       if (i == 3 || i == 4) continue;
       let [x, y] = mapToViewport(...getVertex(i).map((v) => v ));
       if (i == 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
-  }
-
-    let vertexColor = {
-	4: "blue",
-	3: "red",
-	1: "green",
-	5: "white"
     }
-
-    //Desenha os vértices
-    for(let i = 0; i < numPoints; i++){
-	if(i==3 || i==4) continue;
-	let [x,y] = mapToViewPort(...getVertex(i).map((x) => x));
-	ctx.beginPath();
-	ctx.fillStyle = vertexColor[i];
-	ctx.arc(x, y, 4, 0, 2*Math.PI);
-	ctx.fill();
-	ctx.closePath();
-    }
-
-    //Preencher bordas do quadrado
-    ctx.closePath();
-    ctx.strokeStyle = "gray";
-    ctx.lineWidth = 10;
-    ctx.stroke();
-
+    
     //Método usado para mudar o gradiente do quadrado dependendo do vértice
     if(vertice === 3 || vertice == 4){
         var grd = ctx.createLinearGradient(100, 200, 200, 100);
@@ -90,6 +66,33 @@
     // Preencher quadrado com a cor
     ctx.fillStyle = grd;
     ctx.fill();
+
+    //Preencher bordas do quadrado
+    ctx.closePath();
+    ctx.strokeStyle = "gray";
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    
+    let vertexColor = {
+      2: "blue",
+      5: "white",
+      1: "green",
+      0: "red"
+    }
+
+
+    //Desenha os vértices
+    for(let i = 0; i < numPoints; i++){
+      if(i==3 || i==4) continue;
+      let [x,y] = mapToViewport(...getVertex(i).map((x) => x));
+      ctx.beginPath();
+      ctx.fillStyle = vertexColor[i];
+      ctx.arc(x, y, 4, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.closePath();
+    }
+    
+    
  }
 
  function mainEntrance() {
@@ -119,7 +122,6 @@
       });
 
      var runanimation = (() => {
-        // teta-angulow
          var angle = 2.0;
          return () => {
              draw(ctx,angle,vertice);
