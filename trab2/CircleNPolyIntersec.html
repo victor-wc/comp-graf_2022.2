@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Polygons Intersection</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body>
+    <div id="container">
+      <canvas id="theCanvas" width="500" height="500">
+        Please upgrade your browser.
+      </canvas>
+      <h2>Circle ∩ Triangle ∩ Rectangle</h2>
+    </div>
+
+    <script type="module" src="CircleNPolyIntersec.js"></script>
+    <script src="./gl-matrix.js"></script>
+    <script src="./SAT.js"></script>
+    <script type="text/javascript">
+      const { mat2, mat3, mat4, vec2, vec3, vec4 } = glMatrix; // deconstruct glMatrix object.
+    </script>
+    
+
+    <script>
+      const queryString = window.location.search;
+
+      // Get the width and height of the canvas from URL parameters
+      const urlParams = new URLSearchParams(queryString); 
+      const x = urlParams.get("w") || "500";
+      const y = urlParams.get("h") || "500";
+
+      // Set the width and height of the canvas 
+      let canvas = document.getElementById("theCanvas");
+      canvas.width = x;
+      canvas.height = y;
+    </script>
+  </body>
+</html>
