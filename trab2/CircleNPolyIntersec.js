@@ -195,49 +195,6 @@
      circle.radius = vec2d.len(vec2d.sub([], circle.control, circle.center));
  }
  
- 
- function checkTriangleIntersections(triangle, triangles, rectangles, circles) {
-   for (let triangle2 of triangles)
-     if (triangle != triangle2 && convexPolysIntersect(triangle.poly, triangle2.poly)) 
-       triangle.color = triangle2.color = "red";
- 
-   for (let circle of circles) 
-     if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
-       circle.color = triangle.color = "red";
- 
-   for (let rect of rectangles) 
-     if (convexPolysIntersect(rect.poly, triangle.poly)) 
-       rect.color = triangle.color = "red";
- }
- 
- function checkRectangleIntersections(rect, triangles, rectangles, circles) {
-   for (let rectangle2 of rectangles)
-     if (rect != rectangle2 && convexPolysIntersect(rect.poly, rectangle2.poly)) 
-       rect.color = rectangle2.color = "red";
- 
-   for (let circle of circles) 
-     if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly))
-       circle.color = rect.color = "red";
- 
-   for (let triangle of triangles) 
-     if (convexPolysIntersect(rect.poly, triangle.poly)) 
-       triangle.color = rect.color = "red";
- }
- 
- function checkCircleIntersections(circle, triangles, rectangles, circles) {
-   for (let circle2 of circles) 
-     if (circle != circle2 && circleCircleIntersect(circle.center, circle.radius, circle2.center, circle2.radius)) 
-       circle.color = circle2.color = "red";
- 
-   for (let rect of rectangles) 
-     if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly)) 
-       circle.color = rect.color = "red";
- 
-   for (let triangle of triangles)
-     if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
-       circle.color = triangle.color = "red";
- }
- 
 
  (function polyDemo() {
    const demo = document.querySelector("#theCanvas");
@@ -271,7 +228,21 @@
  
      for (let triangle of isos) {
        triangle.color = "black"; 
-       checkTriangleIntersections(triangle, isos, rects, circs);
+
+        for (let triangle2 of isos){         
+         if (triangle != triangle2 && convexPolysIntersect(triangle.poly, triangle2.poly)) 
+           triangle.color = triangle2.color = "red";
+        }
+ 
+        for (let circle of circs){
+          if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
+            circle.color = triangle.color = "red";
+        }
+
+        for (let rect of rects){
+          if (convexPolysIntersect(rect.poly, triangle.poly)) 
+            rect.color = triangle.color = "red";
+        }
 
        ctx.fillStyle = ctx.strokeStyle = triangle.color;
  
@@ -291,7 +262,19 @@
  
      for (let rect of rects) {
        rect.color = "black"; 
-       checkRectangleIntersections(rect, isos, rects, circs);
+
+       for (let rectangle2 of rects)
+        if (rect != rectangle2 && convexPolysIntersect(rect.poly, rectangle2.poly)) 
+          rect.color = rectangle2.color = "red";
+   
+       for (let circle of circs) 
+        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly))
+          circle.color = rect.color = "red";
+   
+       for (let triangle of isos) 
+        if (convexPolysIntersect(rect.poly, triangle.poly)) 
+          triangle.color = rect.color = "red";
+       
        ctx.fillStyle = ctx.strokeStyle = rect.color;
  
        ctx.beginPath();
@@ -314,7 +297,19 @@
  
      for (let circle of circs) {
        circle.color = "black"; 
-       checkCircleIntersections(circle, isos, rects, circs);
+
+       for (let circle2 of circles) 
+        if (circle != circle2 && circleCircleIntersect(circle.center, circle.radius, circle2.center, circle2.radius)) 
+         circle.color = circle2.color = "red";
+   
+       for (let rect of rectangles) 
+        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly)) 
+          circle.color = rect.color = "red";
+   
+       for (let triangle of triangles)
+        if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
+          circle.color = triangle.color = "red";
+
        ctx.fillStyle = ctx.strokeStyle = circle.color;
  
        ctx.beginPath();
