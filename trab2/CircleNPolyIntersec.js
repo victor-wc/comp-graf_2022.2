@@ -138,26 +138,35 @@
    let vect2 = [];
 
     let degenerated = false;
+
+  for (let i = 1; i < anchors.length; i++){
+    if (vec2d.equals(anchors[0], anchors[i])){
+      degenerated = true;
+      break;
+    }
+  }
+  
+  let degenerated2 = false;
+  
+  for (let i = 1; i < anchors2.length; i++){
+    if (vec2d.equals(anchors2[0], anchors2[i])){
+     degenerated2 = true;
+     break;
+    }
+  }
  
    for (let i = 0; i < p.length; i++){
      vect.push(new SAT.Vector(p[i][0], p[i][1]));
-     if (vec2d.equals(p[0], p[i])){
-      degenerated = true;
-     }
    }
  
-   let degenerated2 = false;
 
    for (let i = 0; i < p2.length; i++){
      vect2.push(new SAT.Vector(p2[i][0], p2[i][1]));
-     if (vec2d.equals(p2[0], p2[i])){
-      degenerated2 = true;
-     }
    }
 
-   if ((isPoint(anchors) && isPoint(anchors2)) || (degenerated2 && degenerated)){
+   if ((degenerated2 && degenerated) || (isPoint(anchors) && isPoint(anchors2))){
     return false;
-   } 
+   }
 
    let poly = new SAT.Polygon(new SAT.Vector(), vect);
    let poly2 = new SAT.Polygon(new SAT.Vector(), vect2);
