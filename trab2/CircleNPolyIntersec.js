@@ -124,27 +124,66 @@
    ];
  }
  
-  function convexPolysIntersect(p, p2) {
-   let vectors = [];
-   let vectors2 = [];
- 
-   for (let i = 0; i < p.length; i++){
-     vectors.push(new SAT.Vector(p[i][0], p[i][1]));
-   }
- 
-   for (let i = 0; i < p2.length; i++){
-     vectors2.push(new SAT.Vector(p2[i][0], p2[i][1]));
-   }
- 
-   return SAT.testPolygonPolygon(new SAT.Polygon(new SAT.Vector(), vectors), new SAT.Polygon(new SAT.Vector(), vectors2));
+ function isPoint(poly) {
+  for (let i = 1; i < poly.length; i++) {
+      if (!vec2d.equals(poly[0], poly[i])){
+        return false;        
+      }
+  }
+  return true;
  }
 
- function convexPolyCircleIntersect(center, radius, poly) {
-   if (util2d.pointInConvexPoly(center, poly)){
-    
-    return true;
+  function convexPolysIntersect(p, p2, anchors, anchors2) {
+   let vect = [];
+   let vect2 = [];
 
+    let degenerated = false;
+ 
+   for (let i = 0; i < p.length; i++){
+     vect.push(new SAT.Vector(p[i][0], p[i][1]));
+     if (vec2d.equals(p[0], p[i])){
+      degenerated = true;
+     }
+   }
+ 
+   let degenerated2 = false;
+
+   for (let i = 0; i < p2.length; i++){
+     vect2.push(new SAT.Vector(p2[i][0], p2[i][1]));
+     if (vec2d.equals(p2[0], p2[i])){
+      degenerated2 = true;
+     }
+   }
+
+   if ((isPoint(anchors) && isPoint(anchors2)) || (degenerated2 && degenerated)){
+    return false;
    } 
+
+   let poly = new SAT.Polygon(new SAT.Vector(), vect);
+   let poly2 = new SAT.Polygon(new SAT.Vector(), vect2);
+
+   let intersecting = SAT.testPolygonPolygon(poly, poly2);
+ 
+   return intersecting;
+ }
+
+ function convexPolyCircleIntersect(center, radius, poly, anchors) {
+   if (isPoint(anchors)) {
+    circleCircleIntersect(center, radius, anchors[0], 0);
+   }
+  
+   let degenerated = false;
+
+   for (let i = 1; i < poly.length; i++)
+    if (vec2d.equals(poly[0], poly[i])){
+      degenerated = true;
+      break;
+    }
+
+   if (util2d.pointInConvexPoly(center, poly) && !degenerated){
+     return true;
+   } 
+
  
    for (let i = 0; i < poly.length; i++){
      if (util2d.distToSegment(center, poly[i], poly[(i + 1) % poly.length]) <= radius){ 
@@ -167,39 +206,6 @@
     }
  }
  
- function makePts(isos, rects, circs) {
-   for (let triangle of isos) {
-     triangle.poly = isosceles(triangle);
-     triangle.anchors = [triangle.basePoint, triangle.oppositeVertex];
-   }
- 
-   for (let rect of rects) {
-     rect.midPoints = midPoints(rect.center, rect.width, rect.height);
-     rect.poly = rectangle(rect);
-     rect.anchors = [rect.center].concat(rect.midPoints);
-   }
- 
-   for (let circle of circs) {
-     circle.control = [circle.center[0], circle.center[1] - circle.radius];
-     circle.anchors = [circle.center, circle.control];
-   }
- }
- 
- function updateInfo(isos, rects, circs) {
-   for (let triangle of isos){
-     triangle.poly = isosceles(triangle);
-   }
- 
-   for (let rect of rects){
-     rect.poly = rectangle(rect);
-   }
- 
-   for (let circle of circs){
-     circle.radius = vec2d.len(vec2d.sub([], circle.control, circle.center));
-   }
- }
- 
-
  (function polyDemo() {
    const demo = document.querySelector("#theCanvas");
    const ctx = demo.getContext("2d");
@@ -224,27 +230,57 @@
      { center: [400, 100], radius: 50, color: "black" },
    ];
  
-   makePts(isos, rects, circs);
+   const makePts = () => {
+    for (let triangle of isos) {
+      triangle.poly = isosceles(triangle);
+      triangle.anchors = [triangle.basePoint, triangle.oppositeVertex];
+    }
+  
+    for (let rect of rects) {
+      rect.midPoints = midPoints(rect.center, rect.width, rect.height);
+      rect.poly = rectangle(rect);
+      rect.anchors = [rect.center].concat(rect.midPoints);
+    }
+  
+    for (let circle of circs) {
+      circle.resizePoint = [circle.center[0], circle.center[1] - circle.radius];
+      circle.anchors = [circle.center, circle.resizePoint];
+    }
+  }
+
+   makePts();
  
    const update = () => {
      fillCanvas(ctx, width, height);
-     updateInfo(isos, rects, circs);
+
+      for (let triangle of isos){
+        triangle.poly = isosceles(triangle);
+      }
+    
+      for (let rect of rects){
+        rect.poly = rectangle(rect);
+      }
+    
+      for (let circle of circs){
+        circle.radius = vec2d.len(vec2d.sub([], circle.resizePoint, circle.center));
+      }
+    
  
      for (let triangle of isos) {
        triangle.color = "black"; 
 
         for (let triangle2 of isos){         
-         if (triangle != triangle2 && convexPolysIntersect(triangle.poly, triangle2.poly)) 
+         if (triangle != triangle2 && convexPolysIntersect(triangle.poly, triangle2.poly, triangle.anchors, triangle2.anchors)) 
            triangle.color = triangle2.color = "red";
         }
  
         for (let circle of circs){
-          if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
+          if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly, triangle.anchors)) 
             circle.color = triangle.color = "red";
         }
 
         for (let rect of rects){
-          if (convexPolysIntersect(rect.poly, triangle.poly)) 
+          if (convexPolysIntersect(rect.poly, triangle.poly, rect.anchors, triangle.anchors)) 
             rect.color = triangle.color = "red";
         }
 
@@ -268,15 +304,15 @@
        rect.color = "black"; 
 
        for (let rectangle2 of rects)
-        if (rect != rectangle2 && convexPolysIntersect(rect.poly, rectangle2.poly)) 
+        if (rect != rectangle2 && convexPolysIntersect(rect.poly, rectangle2.poly, rect.anchors, rectangle2.anchors)) 
           rect.color = rectangle2.color = "red";
    
        for (let circle of circs) 
-        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly))
+        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly, rect.anchors))
           circle.color = rect.color = "red";
    
        for (let triangle of isos) 
-        if (convexPolysIntersect(rect.poly, triangle.poly)) 
+        if (convexPolysIntersect(rect.poly, triangle.poly, rect.anchors, triangle.anchors)) 
           triangle.color = rect.color = "red";
        
        ctx.fillStyle = ctx.strokeStyle = rect.color;
@@ -307,11 +343,11 @@
          circle.color = circle2.color = "red";
    
        for (let rect of rects) 
-        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly)) 
+        if (convexPolyCircleIntersect(circle.center, circle.radius, rect.poly, rect.anchors)) 
           circle.color = rect.color = "red";
    
        for (let triangle of isos)
-        if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly)) 
+        if (convexPolyCircleIntersect(circle.center, circle.radius, triangle.poly, triangle.anchors)) 
           circle.color = triangle.color = "red";
 
        ctx.fillStyle = ctx.strokeStyle = circle.color;
@@ -325,7 +361,7 @@
        ctx.fill();
      
        ctx.beginPath();
-       ctx.arc(...circle.control, 5, 0, Math.PI * 2);
+       ctx.arc(...circle.resizePoint, 5, 0, Math.PI * 2);
        ctx.fill();
      }
    };
