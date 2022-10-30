@@ -4,15 +4,9 @@
  * Summary.
  * <p>Hierarchical Robot object using a matrix stack.</p>
  *
- * @author Paulo Roma
- * @since 27/09/2016
+ * @author Victor Cardoso
+ * @since 25/10/2022
  * @see https://orion.lcg.ufrj.br/WebGL/labs/WebGL/Assignment_3/Hierarchy.html
- * @see <a href="/WebGL/labs/WebGL/Assignment_3/Hierarchy.js">source</a>
- * @see <a href="/WebGL/labs/WebGL/teal_book/cuon-matrix.js">cuon-matrix</a>
- * @see https://www.cs.ucy.ac.cy/courses/EPL426/courses/eBooks/ComputerGraphicsPrinciplesPractice.pdf#page=188
- * @see https://www.cs.drexel.edu/~david/Classes/ICG/Lectures_new/L-14_HierchModels.pdf
- * @see https://www.lcg.ufrj.br/WebGL/labs/WebGL/Assignment_3/5.hierarchy.pdf
- * @see <img src="../robot.png" width="512">
  */
 
  "use strict";
@@ -219,35 +213,43 @@
   */
  var torsoMatrix = new Matrix4().setTranslate(0, 0, 0);
  /**  @type {Matrix4} */
- var shoulderMatrix = new Matrix4().setTranslate(6.5, 2, 0);
+ var shoulderLeftMatrix = new Matrix4().setTranslate(6.5, 2, 0);
  /**  @type {Matrix4} */
- var armLeftMatrix = new Matrix4().setTranslate(0, 3, 0);
+ var shoulderRightMatrix = new Matrix4().setTranslate(-6.5, 2, 0);
  /**  @type {Matrix4} */
- var armRightMatrix = new Matrix4().setTranslate(0, -3, 0);
+ var armLeftMatrix = new Matrix4().setTranslate(0, -5, 0);
  /**  @type {Matrix4} */
- var handMatrix = new Matrix4().setTranslate(0, -4, 0);
+ var armRightMatrix = new Matrix4().setTranslate(0, -5, 0);
  /**  @type {Matrix4} */
- var headMatrix = new Matrix4().setTranslate(-6.5, 5, 0);
+ var handLeftMatrix = new Matrix4().setTranslate(0, -4, 0);
  /**  @type {Matrix4} */
- var legLeftMatrix = new Matrix4().setTranslate(-2, -5, 1);
+ var handRightMatrix = new Matrix4().setTranslate(0, -4, 0);
  /**  @type {Matrix4} */
- var legRightMatrix = new Matrix4().setTranslate(3, -5, 1);
+ var headMatrix = new Matrix4().setTranslate(0, 7, 0);
+ /**  @type {Matrix4} */
+ var legLeftMatrix = new Matrix4().setTranslate(-2, -8, 0);
+ /**  @type {Matrix4} */
+ var legRightMatrix = new Matrix4().setTranslate(3, -8, 0);
 
  
  var torsoAngle = 0.0;
- var shoulderAngle = 0.0;
+ var shoulderLeftAngle = 0.0;
+ var shoulderRightAngle = 0.0;
  var armLeftAngle = 0.0;
  var armRightAngle = 0.0;
  var legLeftAngle = 0.0;
  var legRightAngle = 0.0;
- var handAngle = 0.0;
+ var handLeftAngle = 0.0;
+ var handRightAngle = 0.0;
  var headAngle = 0.0;
  
  var torsoMatrixLocal = new Matrix4().setScale(10, 10, 5);
- var shoulderMatrixLocal = new Matrix4().setScale(3, 5, 2);
+ var shoulderLeftMatrixLocal = new Matrix4().setScale(3, 5, 2);
+ var shoulderRightMatrixLocal = new Matrix4().setScale(3, 5, 2);
  var armRightMatrixLocal = new Matrix4().setScale(3, 5, 2);
  var armLeftMatrixLocal = new Matrix4().setScale(3, 5, 2);
- var handMatrixLocal = new Matrix4().setScale(1, 3, 3);
+ var handLeftMatrixLocal = new Matrix4().setScale(1, 3, 3);
+ var handRightMatrixLocal = new Matrix4().setScale(1, 3, 3);
  var headMatrixLocal = new Matrix4().setScale(4, 4, 4);
  var legLeftMatrixLocal = new Matrix4().setScale(3, 10, 2);
  var legRightMatrixLocal = new Matrix4().setScale(3, 10, 2);
@@ -303,28 +305,28 @@
        torsoMatrix.setTranslate(0, 0, 0).rotate(torsoAngle, 0, 1, 0);
        break;
      case "s":
-       shoulderAngle += 15;
+       shoulderRightAngle += 15;
        // rotate shoulder clockwise about a point 2 units above its center
        var currentShoulderRot = new Matrix4()
          .setTranslate(0, 2, 0)
-         .rotate(-shoulderAngle, 1, 0, 0)
+         .rotate(-shoulderRightAngle, 1, 0, 0)
          .translate(0, -2, 0);
-       shoulderMatrix.setTranslate(6.5, 2, 0).multiply(currentShoulderRot);
+       shoulderRightMatrix.setTranslate(-6.5, 2, 0).multiply(currentShoulderRot);
        break;
      case "S":
-       shoulderAngle -= 15;
+       shoulderRightAngle -= 15;
        var currentShoulderRot = new Matrix4()
          .setTranslate(0, 2, 0)
-         .rotate(-shoulderAngle, 1, 0, 0)
+         .rotate(-shoulderRightAngle, 1, 0, 0)
          .translate(0, -2, 0);
-       shoulderMatrix.setTranslate(6.5, 2, 0).multiply(currentShoulderRot);
+       shoulderRightMatrix.setTranslate(-6.5, 2, 0).multiply(currentShoulderRot);
        break;
      case "a":
        armRightAngle += 15;
        // rotate arm clockwise about its top front corner
        var currentArm = new Matrix4()
          .setTranslate(0, 2.5, 1.0)
-         .rotate(-armAngle, 1, 0, 0)
+         .rotate(-armRightAngle, 1, 0, 0)
          .translate(0, -2.5, -1.0);
        armRightMatrix.setTranslate(0, -5, 0).multiply(currentArm);
        break;
@@ -332,17 +334,42 @@
        armRightAngle -= 15;
        var currentArm = new Matrix4()
          .setTranslate(0, 2.5, 1.0)
-         .rotate(-armAngle, 1, 0, 0)
+         .rotate(-armRightAngle, 1, 0, 0)
          .translate(0, -2.5, -1.0);
        armRightMatrix.setTranslate(0, -5, 0).multiply(currentArm);
        break;
+     case "e":
+      armLeftAngle += 15;
+      // rotate arm clockwise about its top front corner
+      var currentArm = new Matrix4()
+        .setTranslate(0, 2.5, 1.0)
+        .rotate(-armLeftAngle, 1, 0, 0)
+        .translate(0, -2.5, -1.0);
+      armLeftMatrix.setTranslate(0, -5, 0).multiply(currentArm);
+      break;
+     case "E":
+      armLeftAngle -= 15;
+      var currentArm = new Matrix4()
+        .setTranslate(0, 2.5, 1.0)
+        .rotate(-armLeftAngle, 1, 0, 0)
+        .translate(0, -2.5, -1.0);
+      armLeftMatrix.setTranslate(0, -5, 0).multiply(currentArm);
+      break;
      case "h":
-       handAngle += 15;
-       handMatrix.setTranslate(0, -4, 0).rotate(handAngle, 0, 1, 0);
+       handLeftAngle += 15;
+       handLeftMatrix.setTranslate(0, -4, 0).rotate(handLeftAngle, 0, 1, 0);
        break;
      case "H":
-       handAngle -= 15;
-       handMatrix.setTranslate(0, -4, 0).rotate(handAngle, 0, 1, 0);
+       handLeftAngle -= 15;
+       handLeftMatrix.setTranslate(0, -4, 0).rotate(handLeftAngle, 0, 1, 0);
+       break;
+     case "Q":
+       handRightAngle += 15;
+       handRightMatrix.setTranslate(0, -4, 0).rotate(handRightAngle, 0, 1, 0);
+       break;
+      case "q":
+       handRightAngle -= 15;
+       handRightMatrix.setTranslate(0, -4, 0).rotate(handRightAngle, 0, 1, 0);
        break;
      case "l":
        headAngle += 15;
@@ -352,6 +379,54 @@
        headAngle -= 15;
        headMatrix.setTranslate(0, 7, 0).rotate(headAngle, 0, 1, 0);
        break;
+      case "d":
+        shoulderLeftAngle += 15;
+        var currentShoulderRot = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-shoulderLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        shoulderLeftMatrix.setTranslate(6.5, 2, 0).multiply(currentShoulderRot);
+        break;
+      case "D":
+        shoulderLeftAngle -= 15;
+        var currentShoulderRot = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-shoulderLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        shoulderLeftMatrix.setTranslate(6.5, 2, 0).multiply(currentShoulderRot);
+        break;
+      case "f":
+        legRightAngle += 15;
+        var currentLeg = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-legRightAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        legRightMatrix.setTranslate(3, -8, 0).multiply(currentLeg);
+        break;
+      case "F":
+        legRightAngle -= 15;
+        var currentLeg = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-legRightAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        legRightMatrix.setTranslate(3, -8, 0).multiply(currentLeg);
+        break;
+      case "g":
+        legLeftAngle += 15;
+        var currentLeg = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-legLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        legLeftMatrix.setTranslate(-2, -8, 0).multiply(currentLeg);
+        break;
+      case "G":
+        legLeftAngle -= 15;
+        var currentLeg = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-legLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        legLeftMatrix.setTranslate(-2, -8, 0).multiply(currentLeg);
+        break;
      default:
        return;
    }
@@ -432,41 +507,52 @@
    s.push(torsoMatrix);
    renderCube(s, torsoMatrixLocal);
  
-   // shoulder relative to torso
-   s.push(new Matrix4(s.top()).multiply(shoulderMatrix));
-   renderCube(s, shoulderMatrixLocal);
-   
+   // left shoulder relative to torso
+   s.push(new Matrix4(s.top()).multiply(shoulderRightMatrix));
+   renderCube(s, shoulderRightMatrixLocal);
+
    // left arm relative to shoulder
    s.push(new Matrix4(s.top()).multiply(armLeftMatrix));
    renderCube(s, armLeftMatrixLocal);
- 
+
+   // left hand relative to arm
+   s.push(new Matrix4(s.top()).multiply(handLeftMatrix));
+   renderCube(s, handLeftMatrixLocal);
+    
+   s.pop();
+   s.pop();
+   s.pop();
+
+   // right shoulder relative to torso
+   s.push(new Matrix4(s.top()).multiply(shoulderLeftMatrix));
+   renderCube(s, shoulderLeftMatrixLocal);
+
+   
    // right arm relative to shoulder
    s.push(new Matrix4(s.top()).multiply(armRightMatrix));
    renderCube(s, armRightMatrixLocal);
  
-   // hand relative to arm
-   s.push(new Matrix4(s.top()).multiply(handMatrix));
-   renderCube(s, handMatrixLocal);
+   // right hand relative to arm
+   s.push(new Matrix4(s.top()).multiply(handRightMatrix));
+   renderCube(s, handRightMatrixLocal);
+
    s.pop();
-   s.pop();
+   s.pop(); 
    s.pop();
  
    // head relative to torso
    s.push(new Matrix4(s.top()).multiply(headMatrix));
    renderCube(s, headMatrixLocal);
    s.pop();
-   s.pop();
 
    // left leg relative to torso
     s.push(new Matrix4(s.top()).multiply(legLeftMatrix));
     renderCube(s, legLeftMatrixLocal);
     s.pop();
-    s.pop();
 
    // right leg relative to torso
     s.push(new Matrix4(s.top()).multiply(legRightMatrix));
     renderCube(s, legRightMatrixLocal);
-    s.pop();
     s.pop();
 
  
