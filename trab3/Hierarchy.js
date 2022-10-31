@@ -11,6 +11,7 @@
 
  "use strict";
 
+
  /**
   * A very basic stack class,
   * for keeping a hierarchy of transformations.
@@ -73,6 +74,8 @@
    }
  }
  
+ var rotator;
+
  /**
   * <p>Creates data for vertices, colors, and normal vectors for
   * a unit cube. </p>
@@ -227,9 +230,17 @@
  /**  @type {Matrix4} */
  var headMatrix = new Matrix4().setTranslate(0, 7, 0);
  /**  @type {Matrix4} */
- var legLeftMatrix = new Matrix4().setTranslate(-2, -8, 0);
+ var legLeftMatrix = new Matrix4().setTranslate(-2, -7, 0);
  /**  @type {Matrix4} */
- var legRightMatrix = new Matrix4().setTranslate(3, -8, 0);
+ var legRightMatrix = new Matrix4().setTranslate(3, -7, 0);
+ /**  @type {Matrix4} */
+ var footLeftMatrix = new Matrix4().setTranslate(0, -2, 1.6);
+ /**  @type {Matrix4} */
+ var footRightMatrix = new Matrix4().setTranslate(0, -2, 1.6);
+ /**  @type {Matrix4} */
+ var ankleRightMatrix = new Matrix4().setTranslate(0, -4, 0);
+ /**  @type {Matrix4} */
+ var ankleLeftMatrix = new Matrix4().setTranslate(0, -4, 0);
 
  
  var torsoAngle = 0.0;
@@ -242,6 +253,10 @@
  var handLeftAngle = 0.0;
  var handRightAngle = 0.0;
  var headAngle = 0.0;
+ var footLeftAngle = 0.0;
+ var footRightAngle = 0.0;
+ var ankleLeftAngle = 0.0;
+ var ankleRightAngle = 0.0;
  
  var torsoMatrixLocal = new Matrix4().setScale(10, 10, 5);
  var shoulderLeftMatrixLocal = new Matrix4().setScale(3, 5, 2);
@@ -251,8 +266,12 @@
  var handLeftMatrixLocal = new Matrix4().setScale(1, 3, 3);
  var handRightMatrixLocal = new Matrix4().setScale(1, 3, 3);
  var headMatrixLocal = new Matrix4().setScale(4, 4, 4);
- var legLeftMatrixLocal = new Matrix4().setScale(3, 10, 2);
- var legRightMatrixLocal = new Matrix4().setScale(3, 10, 2);
+ var legLeftMatrixLocal = new Matrix4().setScale(3, 4, 2);
+ var legRightMatrixLocal = new Matrix4().setScale(3, 4, 2);
+ var footLeftMatrixLocal = new Matrix4().setScale(3, 1, 5);
+ var footRightMatrixLocal = new Matrix4().setScale(3, 1, 5);
+ var ankleLeftMatrixLocal = new Matrix4().setScale(3, 4, 2);
+ var ankleRightMatrixLocal = new Matrix4().setScale(3, 4, 2);
  
  /**
   * View matrix.
@@ -401,7 +420,7 @@
           .setTranslate(0, 2, 0)
           .rotate(-legRightAngle, 1, 0, 0)
           .translate(0, -2, 0);
-        legRightMatrix.setTranslate(3, -8, 0).multiply(currentLeg);
+        legRightMatrix.setTranslate(3, -7, 0).multiply(currentLeg);
         break;
       case "F":
         legRightAngle -= 15;
@@ -409,7 +428,7 @@
           .setTranslate(0, 2, 0)
           .rotate(-legRightAngle, 1, 0, 0)
           .translate(0, -2, 0);
-        legRightMatrix.setTranslate(3, -8, 0).multiply(currentLeg);
+        legRightMatrix.setTranslate(3, -7, 0).multiply(currentLeg);
         break;
       case "g":
         legLeftAngle += 15;
@@ -417,7 +436,7 @@
           .setTranslate(0, 2, 0)
           .rotate(-legLeftAngle, 1, 0, 0)
           .translate(0, -2, 0);
-        legLeftMatrix.setTranslate(-2, -8, 0).multiply(currentLeg);
+        legLeftMatrix.setTranslate(-2, -7, 0).multiply(currentLeg);
         break;
       case "G":
         legLeftAngle -= 15;
@@ -425,7 +444,39 @@
           .setTranslate(0, 2, 0)
           .rotate(-legLeftAngle, 1, 0, 0)
           .translate(0, -2, 0);
-        legLeftMatrix.setTranslate(-2, -8, 0).multiply(currentLeg);
+        legLeftMatrix.setTranslate(-2, -7, 0).multiply(currentLeg);
+        break;
+      case "j":
+        ankleLeftAngle += 15;
+        var currentAnkle = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-ankleLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        ankleLeftMatrix.setTranslate(0, -4, 0).multiply(currentAnkle);
+        break;
+      case "J":
+        ankleLeftAngle -= 15;
+        var currentAnkle = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-ankleLeftAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        ankleLeftMatrix.setTranslate(0, -4, 0).multiply(currentAnkle);
+        break;
+      case "k":
+        ankleRightAngle += 15;
+        var currentAnkle = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-ankleRightAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        ankleRightMatrix.setTranslate(0, -4, 0).multiply(currentAnkle);
+        break;
+      case "K":
+        ankleRightAngle -= 15;
+        var currentAnkle = new Matrix4()
+          .setTranslate(0, 2, 0)
+          .rotate(-ankleRightAngle, 1, 0, 0)
+          .translate(0, -2, 0);
+        ankleRightMatrix.setTranslate(0, -4, 0).multiply(currentAnkle);
         break;
      default:
        return;
@@ -501,6 +552,9 @@
  function draw() {
    // clear the framebuffer
    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
+
+   view.elements = rotator.getViewMatrix();
+   rotator.setViewDistance(45);
  
    // set up the matrix stack
    var s = new Stack();
@@ -508,8 +562,8 @@
    renderCube(s, torsoMatrixLocal);
  
    // left shoulder relative to torso
-   s.push(new Matrix4(s.top()).multiply(shoulderRightMatrix));
-   renderCube(s, shoulderRightMatrixLocal);
+   s.push(new Matrix4(s.top()).multiply(shoulderLeftMatrix));
+   renderCube(s, shoulderLeftMatrixLocal);
 
    // left arm relative to shoulder
    s.push(new Matrix4(s.top()).multiply(armLeftMatrix));
@@ -518,16 +572,15 @@
    // left hand relative to arm
    s.push(new Matrix4(s.top()).multiply(handLeftMatrix));
    renderCube(s, handLeftMatrixLocal);
-    
+   
    s.pop();
    s.pop();
    s.pop();
 
    // right shoulder relative to torso
-   s.push(new Matrix4(s.top()).multiply(shoulderLeftMatrix));
-   renderCube(s, shoulderLeftMatrixLocal);
+   s.push(new Matrix4(s.top()).multiply(shoulderRightMatrix));
+   renderCube(s, shoulderRightMatrixLocal);
 
-   
    // right arm relative to shoulder
    s.push(new Matrix4(s.top()).multiply(armRightMatrix));
    renderCube(s, armRightMatrixLocal);
@@ -537,8 +590,8 @@
    renderCube(s, handRightMatrixLocal);
 
    s.pop();
-   s.pop(); 
    s.pop();
+   s.pop(); 
  
    // head relative to torso
    s.push(new Matrix4(s.top()).multiply(headMatrix));
@@ -546,13 +599,37 @@
    s.pop();
 
    // left leg relative to torso
-    s.push(new Matrix4(s.top()).multiply(legLeftMatrix));
-    renderCube(s, legLeftMatrixLocal);
+   s.push(new Matrix4(s.top()).multiply(legLeftMatrix));
+   renderCube(s, legLeftMatrixLocal);
+
+   // left ankle relative to leg
+   s.push(new Matrix4(s.top()).multiply(ankleRightMatrix));
+   renderCube(s, ankleLeftMatrixLocal);
+
+   //left foot relative to leg
+   s.push(new Matrix4(s.top()).multiply(footLeftMatrix));
+   renderCube(s, footLeftMatrixLocal);
+
+    s.pop();
+    s.pop();
     s.pop();
 
-   // right leg relative to torso
+    // right leg relative to torso
     s.push(new Matrix4(s.top()).multiply(legRightMatrix));
     renderCube(s, legRightMatrixLocal);
+    
+    // right ankle relative to leg
+    s.push(new Matrix4(s.top()).multiply(ankleLeftMatrix));
+    renderCube(s, ankleRightMatrixLocal);
+
+    //right foot relative to leg
+    s.push(new Matrix4(s.top()).multiply(footRightMatrix));
+    renderCube(s, footRightMatrixLocal);
+
+    s.pop();
+    s.pop();
+    s.pop();
+ 
     s.pop();
 
  
@@ -577,6 +654,8 @@
  window.addEventListener("load", (event) => {
    // retrieve <canvas> element
    var canvas = document.getElementById("theCanvas");
+
+   
  
    // key handler
    window.onkeypress = handleKeyPress;
@@ -626,6 +705,8 @@
    gl.clearColor(0.9, 0.9, 0.9, 1.0);
  
    gl.enable(gl.DEPTH_TEST);
+
+   rotator = new SimpleRotator(canvas);
  
    // define an animation loop
    var animate = function () {
