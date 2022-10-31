@@ -525,7 +525,7 @@
    loc = gl.getUniformLocation(lightingShader, "projection");
    gl.uniformMatrix4fv(loc, false, projection.elements);
    loc = gl.getUniformLocation(lightingShader, "u_Color");
-   gl.uniform4f(loc, 1.0, 1.0, 0.6, 1.0);
+   gl.uniform4f(loc, 0.7, 0.1, 0.1, 1.0);
    var loc = gl.getUniformLocation(lightingShader, "lightPosition");
    gl.uniform4f(loc, 2.0, 8.0, 10.0, 1.0);
  

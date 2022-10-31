@@ -3,8 +3,18 @@ Vertex shader does basic Lambert shading. -->
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <head>
         <meta charset="utf-8">
         <title>Hierarchy</title>
+        <style>
+            body {
+                display: flex;
+            }
+
+            div {
+                margin-left: 2vw;
+            }
+        </style>
     </head>
 
     <body>
@@ -12,23 +22,25 @@ Vertex shader does basic Lambert shading. -->
             Please use a browser that supports "canvas"
         </canvas>
 
-        <p>Keyboard controls:</p>
+        <div>
+            <p>Keyboard controls:</p>
 
-        <ul style="list-style: none">
-            <li>l, L - head rotation</li>
-            <li>t, T - torso rotation</li>
-            <li>s, S - right shoulder rotation</li>
-            <li>a, A - right arm rotation</li>
-            <li>q, Q - right hand rotation</li>
-            <li>g, G - right leg rotation</li>
-            <li>k, K - right ankle rotation</li>
-            <li>d, D - left shoulder rotation</li>
-            <li>e, E - left arm rotation</li>
-            <li>f, F - left leg rotation</li>
-            <li>j, J - left ankle rotation</li>
-            <li>h, H - left hand rotation</li>
-            <li id="options"></li>
-        </ul>
+            <ul style="list-style: none">
+                <li>l, L - head rotation</li>
+                <li>t, T - torso rotation</li>
+                <li>s, S - right shoulder rotation</li>
+                <li>a, A - right arm rotation</li>
+                <li>q, Q - right hand rotation</li>
+                <li>g, G - right leg rotation</li>
+                <li>k, K - right ankle rotation</li>
+                <li>d, D - left shoulder rotation</li>
+                <li>e, E - left arm rotation</li>
+                <li>f, F - left leg rotation</li>
+                <li>j, J - left ankle rotation</li>
+                <li>h, H - left hand rotation</li>
+                <li id="options"></li>
+            </ul>
+        </div>
 
         <script id="vertexLightingShader" type="x-shader/x-vertex">
             uniform mat4 model;
