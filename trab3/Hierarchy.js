@@ -232,7 +232,7 @@
  /**  @type {Matrix4} */
  var legLeftMatrix = new Matrix4().setTranslate(-2, -7, 0);
  /**  @type {Matrix4} */
- var legRightMatrix = new Matrix4().setTranslate(3, -7, 0);
+ var legRightMatrix = new Matrix4().setTranslate(2, -7, 0);
  /**  @type {Matrix4} */
  var footLeftMatrix = new Matrix4().setTranslate(0, -2, 1.6);
  /**  @type {Matrix4} */
@@ -525,9 +525,9 @@
    loc = gl.getUniformLocation(lightingShader, "projection");
    gl.uniformMatrix4fv(loc, false, projection.elements);
    loc = gl.getUniformLocation(lightingShader, "u_Color");
-   gl.uniform4f(loc, 0.0, 1.0, 0.0, 1.0);
+   gl.uniform4f(loc, 1.0, 1.0, 0.6, 1.0);
    var loc = gl.getUniformLocation(lightingShader, "lightPosition");
-   gl.uniform4f(loc, 5.0, 10.0, 5.0, 1.0);
+   gl.uniform4f(loc, 2.0, 8.0, 10.0, 1.0);
  
    var modelMatrixloc = gl.getUniformLocation(lightingShader, "model");
    var normalMatrixLoc = gl.getUniformLocation(lightingShader, "normalMatrix");
